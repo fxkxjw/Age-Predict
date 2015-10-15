@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel='stylesheet' href='/source/web.css' media='screen and (min-width: 901px)'/>
+        <link rel='stylesheet' href='/source/phone.css' media='screen and (max-device-width: 900px)'/>
+        <script type="text/javascript" src="/source/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/source/jquery.form.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $("#sub").attr("disabled", false);
+                $('#img').change(function(){
+                    $('#imgshow').empty();
+                    document.getElementById("notice").innerHTML="Please Submit";
+                });
+            });
+
+            function person()
+            {
+                $("#sub").attr("disabled", true);
+                document.getElementById("notice").innerHTML="Processing...";
+                
+                $("#img_upload").ajaxSubmit(function(str){
+                    //var ret = eval('(' + str + ')');
+                    var ret = JSON.parse(str);
+                    var img_url = "/Images/" + ret[1];
+                    
+                    $('#imgshow').empty();
+                    $('#notice').empty();
+                    $('#result').empty();
+                    //$('#result').append('No.1: ' + <br>);
+                    if (ret[0] == 1){
+                        $('<img width="700px" />').attr('src', img_url).appendTo('#imgshow');
+                        $.each(ret, function(i,item){
+                            if (i > 1){
+                                $('#result').append(item + '<br>');
+                            }
+                        });
+                    }
+                    else{
+                        if(ret[1] != 0){
+                            $('#result').append('No face detected. Please try another phono.');
+                            $('<img width="700px"/>').attr('src', img_url).appendTo('#imgshow');
+                        }
+                        else{
+                            $('#result').append('Please upload a photo.')
+                        }
+                    }
+
+                    $("#sub").attr("disabled", false);
+                });
+
+                return false;
+            }
+        </script>
+
+    </head>
+
+
+
+    <body>
+        <div class="head">
+            <a href="../images/" class="link" >Feature Recognition</a>
+            <div class="logo">
+                <img height="100" width="100" src="/source/logo.jpg"/>&nbsp;Super Vessel
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="header">
+                <h1>Face Recognition</h1>
+
+                <h2>Upload a photo:</h2>
+            </div>
+
+            <div id="imgshow">
+                <img width="700px" class='example' src='/source/demo.jpg'/>
+            </div>
+            <p class="notice" id="notice" style="text-align:center"></p>
+            <p class="result" id="result"></p>
+
+            <form role="form" id="img_upload" action="../imageUpload/" enctype="multipart/form-data" method="post" onsubmit="return person();">
+                {% csrf_token %}
+                <a href="javascript:;" class="file">Choose Photo
+                    <input type="file" id="img" name="img">
+                </a>
+                <button id="sub" type="submit">Submit</button>
+            </form>
+
+
+        </div>
+
+
+</body>
+</html>
+

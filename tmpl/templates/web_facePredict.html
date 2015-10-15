@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+ 
+        <script type="text/javascript" src="/source/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/source/jquery.form.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $("#sub").attr("disabled", false);
+            });
+
+            function person()
+            {
+                $("#sub").attr("disabled", true);
+                document.getElementById("result").innerHTML="Processing...";
+
+                $("#img_upload").ajaxSubmit(function(str){
+                    //var ret = eval('(' + str + ')');
+                    var ret = JSON.parse(str);
+                    var img_url = "/Images/" + ret[1];
+                    
+                    $('#imgshow').empty();
+                    $('<img wight=500 height=500/>').attr('src', img_url).appendTo('#imgshow');
+                    
+                    $('#result').empty();
+                    $.each(ret, function(i,item){
+                        if (i > 1){
+                            $('#result').append(item + '<br>');
+                        }
+                    });
+                    $("#sub").attr("disabled", false);
+                });
+
+                return false;
+            }
+        </script>
+       
+        <style type="text/css">
+            div.links{
+                line-height:1.5em;
+                margin:30px 0px 0px 30px
+            }
+            div.container {
+                line-height:1.5em;
+                margin:50px 100px 50px 100px
+            }
+            h1{
+                color:DodgerBlue;
+                line-height:1.5em;
+                border-bottom: 1px solid black;
+            }
+            h2{
+                color:Black;
+                line-height:1.5em;
+                border-bottom: 1px solid #ccc;
+            }
+            p.result{
+                font: bold 20px/32px arial,sans-serif;
+            }
+
+
+        </style>
+    </head>
+
+
+
+    <body>
+        <div class="links">
+            <a href="../images/">Feature Recognition
+            </a><br>
+            <a href="../tmpl">Age & Gender
+            </a><br>
+        </div>
+
+        <div class="container">
+            <div class="header">
+                <h1>Age & Gender Demo</h1>
+
+                <h2>Classification</h2>
+            </div>
+
+            <p class="notice" id="notice">Upload a photo:</p>
+
+            <form role="form" id="img_upload" action="../imageUpload/" enctype="multipart/form-data" method="post" onsubmit="return person();">
+                {% csrf_token %}
+                <input type="file" id="img" name="img">
+                <!--<input id="sub" value="submit" type="submit">-->
+                <button id="sub" type="submit">submit</button>
+            </form>
+
+            <p class="result" id="result"></p>
+
+            <div id="imgshow">
+                <!--<img wight=300 hight=300 src="/source/example.jpg"/>-->
+            </div>
+
+        </div>
+
+
+</body>
+</html>
+

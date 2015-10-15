@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel='stylesheet' href='/source/web.css' media='screen and (min-width: 901px)'/>
+        <link rel='stylesheet' href='/source/phone.css' media='screen and (max-device-width: 900px)'/>
+        <script type="text/javascript" src="/source/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/source/jquery.form.js"></script>
+        <script type="text/javascript">
+            $(function(){
+                $("#sub").attr("disabled", false);
+                $('#img').change(function(){
+                    $('#imgshow').empty();
+                    document.getElementById("result").innerHTML="Please Submit";
+                });
+           });
+
+            function Image()
+            {
+                $("#sub").attr("disabled", true);
+                document.getElementById("result").innerHTML="Processing...";
+
+                $("#img_upload").ajaxSubmit(function(str){
+                    //var ret = eval('(' + str + ')');
+                    var ret = JSON.parse(str);
+                    var img_url = "/Images/" + ret[1];
+                    
+                    $('#imgshow').empty();
+                    
+                    $('#result').empty();
+                    if (ret[0] == 1){
+                        $('<img width="700px" />').attr('src', img_url).appendTo('#imgshow');
+                        $('#result').append('Result: ' + ret[2]);
+                    }
+                    else{
+                        $('#result').append('Please upload a photo.')
+                    }
+
+                    $("#sub").attr("disabled", false);
+                });
+
+                return false;
+            }
+        </script>
+
+    </head>
+
+
+
+    <body>
+        <div class="head">
+            <a href="../" class="link">Face Recognition</a>
+            <div class="logo">
+                <img height="100" width="100" src="/source/logo.jpg"/>&nbsp;Super Vessel
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="header">
+                <h1>Feature Recognition</h1>
+
+                <h2>Upload an Image:</h2>
+            </div>
+
+            <div id="imgshow">
+                <img width="700px" class='example' src='/source/demo.jpg'/>
+            </div>
+            <p class="result" id="result"></p>
+
+            <form role="form" id="img_upload" action="../Classify/" enctype="multipart/form-data" method="post" onsubmit="return Image();">
+                {% csrf_token %}
+                <a href="javascript:;" class="file">Choose Image
+                    <input type="file" id="img" name="img">
+                </a>
+                <button id="sub" type="submit">Submit</button>
+            </form>
+
+
+        </div>
+
+
+</body>
+</html>
+
